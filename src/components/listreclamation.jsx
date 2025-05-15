@@ -1,31 +1,68 @@
 import React from 'react';
-import { Avatar, List } from 'antd';
+import { List, Steps } from 'antd';
+
 const data = [
   {
-    title: 'Reclamation 1',
+    title: 'Réclamation 1',
+    current: 0,
   },
   {
-    title: 'Reclamation 2',
+    title: 'Réclamation 2',
+    current: 1,
+    status: 'error',
   },
   {
-    title: 'Reclamation 3',
+    title: 'Réclamation 3',
+    current: 2,
   },
   {
-    title: 'Reclamation 4',
+    title: 'Réclamation 4',
+    current: 1,
   },
 ];
+
+const stepItems = [
+  {
+    title: 'Envoyée',
+    description: 'Votre réclamation a été envoyée au service concerné.',
+  },
+  {
+    title: 'En cours',
+    description: 'Votre réclamation est en cours de traitement.',
+  },
+  {
+    title: 'Traité',
+    description: 'Votre réclamation a été traitée.',
+  },
+];
+
 const Listreclamation = () => (
   <List
     itemLayout="horizontal"
     dataSource={data}
-    renderItem={(item, index) => (
-      <List.Item>
+    renderItem={(item) => (
+      <List.Item
+        style={{
+          alignItems: 'flex-start',
+          paddingBottom: '30px',
+        }}
+      >
         <List.Item.Meta
-          title={<a href="https://ant.design">{item.title}</a>}
-          description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+          title={<b>{item.title}</b>}
+          description="Ceci est une description automatique de la réclamation."
         />
+        <div style={{ marginLeft: '20px', minWidth: '300px' }}>
+          <Steps
+            direction="vertical"
+            size="small"
+            current={item.current}
+            status={item.status || 'process'}
+            items={stepItems}
+          />
+        </div>
       </List.Item>
     )}
   />
 );
+
 export default Listreclamation;

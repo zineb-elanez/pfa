@@ -1,5 +1,5 @@
 import React from 'react';
-import { LinkOutlined,AppstoreOutlined ,MenuOutlined} from '@ant-design/icons';
+import { LinkOutlined,AppstoreOutlined ,MenuOutlined,LogoutOutlined} from '@ant-design/icons';
 import { FloatButton } from 'antd';
 
 const Sidebar2 = () => (
@@ -18,8 +18,7 @@ const Sidebar2 = () => (
         icon={<MenuOutlined />}
       >
         <FloatButton icon ={<AppstoreOutlined />}style={{ backgroundColor: 'white', color: 'black' }} />
-        <FloatButton icon={<LinkOutlined />} style={{ backgroundColor: 'white', color: 'black' }} />
-        <FloatButton icon={<LinkOutlined />} style={{ backgroundColor: 'white', color: 'black' }} />
+        <FloatButton icon={<LogoutOutlined />} style={{ backgroundColor: 'white', color: 'black' }} />
 
       </FloatButton.Group>
     </div>
