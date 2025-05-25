@@ -1,90 +1,81 @@
-import React, { useState } from 'react';
-import { AppstoreOutlined, MailOutlined, SettingOutlined, HomeOutlined } from '@ant-design/icons';
-import { Menu } from 'antd';
+import React, { useEffect, useState } from "react";
+import { Layout, Avatar, Dropdown, Menu } from "antd";
+import { LogoutOutlined, MoreOutlined } from "@ant-design/icons";
 
-const items = [
-  {
-    label: 'Accueil',
-    key: 'home',
-    icon: <HomeOutlined />,
-  },
-];
+const { Header } = Layout;
 
-const Navbar = ({ setView }) => {
-  const [current, setCurrent] = useState('mail');
+const Navbar = ({ onLogout, onHomeClick }) => {
+  const [username, setUsername] = useState("");
 
-  const onClick = (e) => {
-    console.log('click ', e);
-    setCurrent(e.key);
-    if (e.key === 'home') {
-      setView('home'); // Return to home view
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("userName");
+    if (storedUsername) {
+      setUsername(storedUsername);
     }
-  };
+  }, []);
 
-  // Placeholder for user initials (replace with actual user data)
-  const userInitials = 'ZA'; // Example initials; update with actual user data
+  const initial = username ? username.charAt(0).toUpperCase() : "?";
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={onLogout}>
+        Déconnexion
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
-    <div
+    <Header
       style={{
-        position: 'fixed',
+        position: "fixed",
         top: 0,
         left: 0,
-        width: '100%',
+        right: 0,
         zIndex: 1000,
-        backgroundColor: '#fff', // White background like grok.com
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)', // Subtle shadow for depth
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 20px', // Padding for spacing
-        height: '60px', // Standard navbar height
+        backgroundColor: "#fff",
+        padding: "0 16px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        height: 50,
+        boxShadow: "0 1px 5px rgba(0,0,0,0.06)",
       }}
     >
-      {/* EMSI logo on the left */}
-      <div
-        style={{
-          marginRight: '20px',
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
+      {/* Logo + Accueil */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <img
-          src="src/assets/logoemsi.png" // Ensure this path is correct
-          alt="EMSI Logo"
-          style={{ height: '40px', objectFit: 'contain' }}
+          src="src/assets/logoemsi.png"
+          alt="Logo"
+          style={{ height: "28px", objectFit: "contain", cursor: "pointer" }}
+          onClick={onHomeClick}
         />
       </div>
-      <Menu
-        onClick={onClick}
-        selectedKeys={[current]}
-        mode="horizontal"
-        items={items}
-        style={{
-          flex: 1, // Menu takes most space
-          backgroundColor: 'transparent', // Transparent to blend with navbar background
-          borderBottom: 'none', // Remove default border
-        }}
-      />
-      {/* Circular avatar with user initials on the right */}
-      <div
-        style={{
-          marginRight: '40px',
-          width: '40px',
-          height: '40px',
-          borderRadius: '50%',
-          backgroundColor: '#18905f', // Greenish-blue background
-          color: '#fff', // White text for initials
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '16px',
-          fontWeight: 'bold',
-        }}
-      >
-        {userInitials}
-      </div>
-    </div>
+
+      {/* Avatar + menu */}
+      <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            cursor: "pointer",
+            gap: "8px",
+          }}
+        >
+          <Avatar
+            style={{
+              backgroundColor: "#1890ff",
+              fontSize: "14px",
+              width: 32,
+              height: 32,
+            }}
+          >
+            {initial}
+          </Avatar>
+          <MoreOutlined style={{ fontSize: 18, color: "#333" }} />
+        </div>
+      </Dropdown>
+    </Header>
   );
 };
 
-export default Navbar; 
+export default Navbar;

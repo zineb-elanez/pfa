@@ -1,25 +1,5 @@
-import React from 'react';
-import { List, Steps } from 'antd';
-
-const data = [
-  {
-    title: 'Réclamation 1',
-    current: 0,
-  },
-  {
-    title: 'Réclamation 2',
-    current: 1,
-    status: 'error',
-  },
-  {
-    title: 'Réclamation 3',
-    current: 2,
-  },
-  {
-    title: 'Réclamation 4',
-    current: 1,
-  },
-];
+import React, { useEffect, useState } from 'react';
+import { List, Steps, Spin, Alert } from 'antd';
 
 const stepItems = [
   {
@@ -36,33 +16,95 @@ const stepItems = [
   },
 ];
 
-const Listreclamation = () => (
-  <List
-    itemLayout="horizontal"
-    dataSource={data}
-    renderItem={(item) => (
-      <List.Item
-        style={{
-          alignItems: 'flex-start',
-          paddingBottom: '30px',
-        }}
-      >
-        <List.Item.Meta
-          title={<b>{item.title}</b>}
-          description="Ceci est une description automatique de la réclamation."
-        />
-        <div style={{ marginLeft: '20px', minWidth: '300px' }}>
-          <Steps
-            direction="vertical"
-            size="small"
-            current={item.current}
-            status={item.status || 'process'}
-            items={stepItems}
-          />
-        </div>
-      </List.Item>
-    )}
-  />
-);
+const mapStatusToStep = (status) => {
+  switch (status?.toUpperCase()) {
+    case 'ENVOYEE':
+      return 0;
+    case 'EN_COURS':
+      return 1;
+    case 'TRAITEE':
+      return 2;
+    default:
+      return 0;
+  }
+};
 
-export default Listreclamation;
+const ListReclamation = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const matricule = localStorage.getItem("userMatricule");
+    fetch(`http://localhost:8101/api/reclamations/user/${matricule}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Erreur HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((responseData) => {
+        const formatted = responseData.map(item => ({
+          id: item.id,
+          date: item.dateReclamation,
+          description: item.description,
+          status: item.status,
+          type: item.type,
+        }));
+        setData(formatted);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <Spin tip="Chargement des réclamations..." />;
+  if (error) return <Alert message="Erreur" description={error} type="error" showIcon />;
+  if (data.length === 0) return <Alert message="Aucune réclamation trouvée." type="info" showIcon />;
+
+  return (
+    <List
+      itemLayout="horizontal"
+      dataSource={data}
+      style={{ marginTop: 20 }}
+      renderItem={item => (
+        <List.Item
+          key={item.id}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            paddingBottom: 30,
+            borderBottom: '1px solid #eee',
+            marginBottom: 20,
+            width:'100%'
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}> {/* Enlevez la limite de largeur */}
+  <List.Item.Meta
+  title={`Réclamation #${item.id} - Type: ${item.type}`}
+  description={
+    <div style={{ lineHeight: '1.8em' }}>
+      <div style={{ marginBottom: '4px' }}><b>Date :</b> {item.date}</div>
+      <div style={{ marginBottom: '4px' }}><b>Description :</b> {item.description}</div>
+      <div><b>Status :</b> {item.status}</div>
+    </div>
+  }
+/>
+   
+</div>
+          <div style={{ minWidth: 300}}>
+            <Steps
+              direction="vertical"
+              size="small"
+              current={mapStatusToStep(item.status)}
+              items={stepItems}
+            />
+          </div>
+        </List.Item>
+      )}
+    />
+  );
+};
+
+export default ListReclamation;
