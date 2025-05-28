@@ -27,7 +27,7 @@ const  Userinterface= () => {
 
   return (
     <div style={{ paddingTop: '2px' }}>
-      <Navbar setView={setView} />
+      
       
       {view === 'home' && (
         <div style={{

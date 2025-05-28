@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Avatar, Dropdown, Menu } from "antd";
+import { Layout, Avatar, Dropdown } from "antd";
 import { LogoutOutlined, MoreOutlined } from "@ant-design/icons";
 
 const { Header } = Layout;
@@ -16,13 +16,20 @@ const Navbar = ({ onLogout, onHomeClick }) => {
 
   const initial = username ? username.charAt(0).toUpperCase() : "?";
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={onLogout}>
-        Déconnexion
-      </Menu.Item>
-    </Menu>
-  );
+  // Gestionnaire pour les clics du menu
+  const handleMenuClick = ({ key }) => {
+    if (key === "logout") {
+      onLogout();
+    }
+  };
+
+  const menuItems = [
+    {
+      key: "logout",
+      icon: <LogoutOutlined />,
+      label: "Déconnexion",
+    },
+  ];
 
   return (
     <Header
@@ -52,7 +59,14 @@ const Navbar = ({ onLogout, onHomeClick }) => {
       </div>
 
       {/* Avatar + menu */}
-      <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
+      <Dropdown 
+        menu={{ 
+          items: menuItems,
+          onClick: handleMenuClick 
+        }} 
+        placement="bottomRight" 
+        trigger={["click"]}
+      >
         <div
           style={{
             display: "flex",

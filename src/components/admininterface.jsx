@@ -10,7 +10,6 @@ const Admininterface = () => {
   const [originalData, setOriginalData] = useState([]);
   const [searchValue, setSearchValue] = useState('');
 
-  // Chargement des données (même fetch que dans Tableau)
   useEffect(() => {
     const matricule = localStorage.getItem("userMatricule");
     if (matricule) {
@@ -36,33 +35,34 @@ const Admininterface = () => {
     }
   }, []);
 
-  // Filtrage effectué ici
-const filteredData = originalData.filter(item => {
-  const search = searchValue.toLowerCase();
+  // Fonction pour mettre à jour le statut dans le state local
+  const handleStatusUpdate = (id, newStatus) => {
+    setOriginalData(prevData =>
+      prevData.map(item =>
+        item.id === id ? { ...item, statut: newStatus } : item
+      )
+    );
+  };
 
-  const isNumberSearch = !isNaN(search) && search.trim() !== "";
+  // Filtrage
+  const filteredData = originalData.filter(item => {
+    const search = searchValue.toLowerCase();
+    const isNumberSearch = !isNaN(search) && search.trim() !== "";
 
-  const idMatch = isNumberSearch && item.id.toString().startsWith(search);
+    const idMatch = isNumberSearch && item.id.toString().startsWith(search);
+    const dateMatch = item.date && item.date.toLowerCase().includes(search);
+    const typeMatch = item.type && item.type.toLowerCase().includes(search);
+    const descriptionMatch = item.description && item.description.toLowerCase().includes(search);
+    const statutMatch = item.statut && item.statut.toLowerCase().includes(search);
+    const usernameMatch = item.username && item.username.toLowerCase().includes(search);
+    const matriculeMatch = item.matricule && item.matricule.toLowerCase().includes(search);
 
-  const dateMatch = item.date && item.date.toLowerCase().includes(search);
-  const typeMatch = item.type && item.type.toLowerCase().includes(search);
-  const descriptionMatch = item.description && item.description.toLowerCase().includes(search);
-  const statutMatch = item.statut && item.statut.toLowerCase().includes(search);
-  const usernameMatch = item.username && item.username.toLowerCase().includes(search);
-  const matriculeMatch = item.matricule && item.matricule.toLowerCase().includes(search);
-
-  // Retourne true si :
-  // - recherche numérique : id commence par search OU d'autres champs contiennent search
-  // - sinon (texte) : n'importe quel champ contient search
-  if (isNumberSearch) {
-    return idMatch || dateMatch || typeMatch || descriptionMatch || statutMatch || usernameMatch || matriculeMatch;
-  } else {
-    return dateMatch || typeMatch || descriptionMatch || statutMatch || usernameMatch || matriculeMatch;
-  }
-});
-
-
-
+    if (isNumberSearch) {
+      return idMatch || dateMatch || typeMatch || descriptionMatch || statutMatch || usernameMatch || matriculeMatch;
+    } else {
+      return dateMatch || typeMatch || descriptionMatch || statutMatch || usernameMatch || matriculeMatch;
+    }
+  });
 
   return (
     <div style={{
@@ -87,7 +87,8 @@ const filteredData = originalData.filter(item => {
           borderRadius: '8px',
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
         }}>
-          <Statistique />
+          {/* On passe les données à jour à Statistique */}
+          <Statistique data={originalData} />
         </div>
 
         <div style={{
@@ -104,7 +105,8 @@ const filteredData = originalData.filter(item => {
             allowClear
             style={{ marginBottom: 16 }}
           />
-          <Tableau data={filteredData} />
+          {/* On passe la fonction pour mettre à jour le statut */}
+          <Tableau data={filteredData} onStatusUpdate={handleStatusUpdate} />
         </div>
       </div>
     </div>

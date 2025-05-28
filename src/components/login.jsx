@@ -47,9 +47,9 @@ const Login = () => {
     <div className="login_wrapper">
       <form className="form_container" onSubmit={handleSubmit}>
         <div className="title_container">
-          <p className="title">Login to your Account</p>
+          <p className="title">Bienvenue, connectez-vous pour continuer</p>
           <span className="subtitle">
-            Get started with our app, just create an account and enjoy the experience.
+            Pour commencer, connectez-vous avec votre matricule et mot de passe fournis par l’établissement pour accéder à la plateforme de réclamation.
           </span>
         </div>
         <br />
@@ -79,7 +79,7 @@ const Login = () => {
             />
           </svg>
           <input
-            placeholder="Enter your matricule"
+            placeholder=" Entrez votre matricule"
             title="Matricule"
             name="matricule"
             type="text"
@@ -115,7 +115,7 @@ const Login = () => {
             />
           </svg>
           <input
-            placeholder="Password"
+            placeholder="Entrez votre mot de passe "
             title="Password"
             name="password"
             type="password"
@@ -127,7 +127,7 @@ const Login = () => {
         </div>
 
         <button title="Sign In" type="submit" className="sign-in_btn">
-          <span>Sign In</span>
+          <span>Se connecter</span>
         </button>
       </form>
 

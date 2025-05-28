@@ -1,28 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { InboxOutlined, EditOutlined, CheckOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { Card, Col, Row, Statistic } from 'antd';
 
-const Statistique = () => {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    const matricule = localStorage.getItem("userMatricule");
-    if (matricule) {
-      fetch(`http://localhost:8101/api/reclamations/user/${matricule}/filtered`)
-        .then(res => res.json())
-        .then(responseData => {
-          setData(responseData);
-        })
-        .catch(error => {
-          console.error("Erreur fetch API:", error);
-        });
-    }
-  }, []);
-
+const Statistique = ({ data }) => {
+  // Calculs basés sur les données reçues en prop
   const total = data.length;
-  const nonTraitees = data.filter(item => item.status?.toLowerCase() === 'envoyee').length;
-  const traitee = data.filter(item => item.status?.toLowerCase() === 'traitee').length;
-  const enCours = data.filter(item => item.status?.toLowerCase() === 'en_cours').length;
+  const nonTraitees = data.filter(item => item.statut?.toLowerCase() === 'envoyee').length;
+  const traitee = data.filter(item => item.statut?.toLowerCase() === 'traitee').length;
+  const enCours = data.filter(item => item.statut?.toLowerCase() === 'en_cours').length;
 
   return (
     <Row gutter={16}>
